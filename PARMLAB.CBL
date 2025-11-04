@@ -1,0 +1,47 @@
+CBL LIST,XREF
+000100 IDENTIFICATION DIVISION.
+000200 PROGRAM-ID. PARMLAB.
+000300 DATA DIVISION.
+000400 WORKING-STORAGE SECTION.
+000500 01 WS-VARIABLES.
+          02 WS-PARM-DATA PIC X(11).
+          02 WS-NUM1-TXT  PIC X(5).
+          02 WS-NUM2-TXT  PIC X(5).
+          02 WS-OPER      PIC X(1).
+          02 WS-NUM.
+             05 WS-NUM1   PIC 9(5) VALUE 0.
+             05 WS-NUM2   PIC 9(5) VALUE 0.
+             05 WS-RESULT PIC 999999,V99 VALUE ZEROS.
+
+       LINKAGE SECTION.
+       01 LK-PARM-BLOCK.
+          05  LK-PARM-DATA  PIC X(256).
+
+000800 PROCEDURE DIVISION USING LK-PARM-BLOCK.
+000910     MOVE LK-PARM-DATA (3:11) TO WS-PARM-DATA.
+           MOVE WS-PARM-DATA(1:5)  TO WS-NUM1-TXT.
+           MOVE WS-PARM-DATA(6:5)  TO WS-NUM2-TXT.
+           MOVE WS-PARM-DATA(11:1) TO WS-OPER.
+
+           MOVE WS-NUM1-TXT TO WS-NUM1.
+           MOVE WS-NUM2-TXT TO WS-NUM2.
+
+           EVALUATE WS-OPER
+               WHEN 'X'
+                  ADD WS-NUM1 TO WS-NUM2 GIVING WS-RESULT
+               WHEN 'Y'
+                    IF WS-NUM2 = 0
+                        DISPLAY "DIVISION POR 0"
+                        MOVE 0 TO WS-RESULT
+                    ELSE
+                       DIVIDE WS-NUM2 INTO WS-NUM1 GIVING WS-RESULT
+                    END-IF
+               WHEN OTHER
+                    DISPLAY "OPERADOR DESCONOCIDO"
+                    MOVE 0 TO WS-RESULT
+           END-EVALUATE.
+           DISPLAY "NUMERO 1: " WS-NUM1.
+           DISPLAY "NUMERO 2: " WS-NUM2.
+           DISPLAY "OPERADOR: " WS-OPER.
+           DISPLAY "RESULTADO: " WS-RESULT
+           GOBACK.
